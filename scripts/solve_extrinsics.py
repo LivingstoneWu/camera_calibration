@@ -32,6 +32,7 @@ CAMERA_ID_MAP = {
     # Example:
     # "0": "front_left",
     # "1": "front_right",
+    "4": "front_head"
 }
 
 
@@ -56,13 +57,13 @@ def parse_args() -> argparse.Namespace:
         type=int,
         nargs=2,
         metavar=("NX", "NY"),
-        default=(8, 5),
+        default=(12, 8),
         help="Checkerboard interior corner dimensions (columns, rows). [default: %(default)s]"
     )
     parser.add_argument(
         "--square-size",
         type=float,
-        default=25.0,
+        default=20.0,
         help="Checker square size in millimetres. [default: %(default)s]"
     )
     parser.add_argument(
