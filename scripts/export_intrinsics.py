@@ -10,11 +10,16 @@ the results under `intrinsics/<camera_id>/calibration.txt` in a human-readable f
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from typing import Tuple
 
 import cv2 as cv
 import numpy as np
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from algorithm.zhang2000.calibration import Zhang2000Calib
 from algorithm.general.calib import CalibMethod
@@ -51,7 +56,7 @@ def parse_args() -> argparse.Namespace:
         type=int,
         nargs=2,
         metavar=("NX", "NY"),
-        default=(13, 9),
+        default=(12, 8),
         help="Checkerboard interior corner dimensions (columns, rows). [default: %(default)s]"
     )
     parser.add_argument(

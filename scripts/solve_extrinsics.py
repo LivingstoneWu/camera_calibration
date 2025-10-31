@@ -10,12 +10,17 @@ human-readable text format.
 
 import argparse
 import json
+import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Tuple
 
 import cv2 as cv
 import numpy as np
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
 
 from algorithm.zhang2000.calibration import Zhang2000Calib
 from algorithm.general.feature_analysis import detect_corners
