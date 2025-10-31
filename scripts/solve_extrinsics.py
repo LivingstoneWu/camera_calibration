@@ -20,12 +20,21 @@ import numpy as np
 from algorithm.zhang2000.calibration import Zhang2000Calib
 from algorithm.general.feature_analysis import detect_corners
 
+# Map dynamic camera IDs to the persistent intrinsics directory names.
+# Update this dictionary to point each current OpenCV camera identifier
+# to the folder that holds its calibration (relative to `intrinsics_root`).
+CAMERA_ID_MAP = {
+    # Example:
+    # "0": "front_left",
+    # "1": "front_right",
+}
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Capture a checkerboard frame and solve extrinsics using stored intrinsics."
     )
-    parser.add_argument("camera_id", help="Identifier that maps to intrinsics/<camera_id>/calibration.txt.")
+    parser.add_argument("camera_id", help="Current camera identifier (used to look up the calibration directory via CAMERA_ID_MAP).")
     parser.add_argument(
         "--camera-index",
         type=int,
@@ -132,7 +141,9 @@ def solve_pose(
 def main() -> None:
     args = parse_args()
 
-    intrinsics_path = args.intrinsics_root / str(args.camera_id) / "calibration.txt"
+    map_key = str(args.camera_id)
+    intrinsics_folder = CAMERA_ID_MAP.get(map_key, map_key)
+    intrinsics_path = args.intrinsics_root / intrinsics_folder / "calibration.txt"
     if not intrinsics_path.exists():
         raise FileNotFoundError(f"Missing intrinsics file for camera {args.camera_id!r}: {intrinsics_path}")
 
