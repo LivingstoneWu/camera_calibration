@@ -2,11 +2,11 @@
 """
 Simple utility to collect still images from a list of cameras.
 
-Each camera is sampled at ~3 Hz until the user presses the space bar,
-at which point the script advances to the next camera in the list.
+Each camera is sampled at ~3 Hz until the user presses the space bar.
 Captured frames are written under data/<camera_id>/ relative to the repo.
 """
 
+import argparse
 import sys
 import time
 from datetime import datetime
@@ -15,12 +15,21 @@ from typing import Iterable, Union
 
 import cv2
 
-# Edit this list to choose which camera indexes or IDs to traverse.
-CAMERA_IDS: Iterable[Union[int, str]] = [0]
-
 CAPTURE_INTERVAL_SEC = 1.0 / 3.0  # 3 Hz
 WINDOW_NAME = "Camera Preview"
 SAVE_ROOT = Path(__file__).resolve().parent.parent / "data"
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Collect still images from one or more cameras at ~3 Hz."
+    )
+    parser.add_argument(
+        "camera_ids",
+        nargs="+",
+        help="OpenCV camera identifiers (indices or device paths).",
+    )
+    return parser.parse_args()
 
 
 def ensure_output_directory(camera_id: Union[int, str]) -> Path:
@@ -44,6 +53,7 @@ def capture_from_camera(camera_id: Union[int, str]) -> bool:
     print(f"Saving frames under {output_dir}")
     next_capture_time = time.time()
     saved_count = 0
+    recording = False
 
     try:
         while True:
@@ -54,6 +64,18 @@ def capture_from_camera(camera_id: Union[int, str]) -> bool:
 
             # Display the live feed so key presses can be detected.
             cv2.imshow(WINDOW_NAME, frame)
+
+            key = cv2.waitKey(1) & 0xFF
+            if key in (27, ord("q")):  # Esc or 'q' exits the script altogether.
+                print("Stopping capture (user request).")
+                return True
+
+            if not recording:
+                if key == ord(" "):  # initial space starts recording
+                    recording = True
+                    next_capture_time = time.time()
+                    print("Recording started.")
+                continue
 
             now = time.time()
             if now >= next_capture_time:
@@ -66,13 +88,9 @@ def capture_from_camera(camera_id: Union[int, str]) -> bool:
                     print(f"⚠️  Failed to write frame to {filename}")
                 next_capture_time = now + CAPTURE_INTERVAL_SEC
 
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord(" "):  # Space bar moves to the next camera.
+            if key == ord(" "):  # Space bar moves to the next camera after recording
                 print(f"➡️  Moving on from camera {camera_id!r}.")
                 break
-            if key in (27, ord("q")):  # Esc or 'q' exits the script altogether.
-                print("Stopping capture (user request).")
-                return True
 
         print(f"Finished camera {camera_id!r}: saved {saved_count} frames.")
         return False
@@ -82,15 +100,23 @@ def capture_from_camera(camera_id: Union[int, str]) -> bool:
 
 
 def main() -> int:
-    if not CAMERA_IDS:
-        print("No camera IDs configured. Update CAMERA_IDS and re-run.")
+    args = parse_args()
+    camera_ids: Iterable[Union[int, str]] = []
+    for cam in args.camera_ids:
+        try:
+            camera_ids.append(int(cam))
+        except ValueError:
+            camera_ids.append(cam)
+
+    if not camera_ids:
+        print("No camera IDs provided.")
         return 1
 
     SAVE_ROOT.mkdir(parents=True, exist_ok=True)
     cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
 
     try:
-        for camera_id in CAMERA_IDS:
+        for camera_id in camera_ids:
             want_quit = capture_from_camera(camera_id)
             if want_quit:
                 break
