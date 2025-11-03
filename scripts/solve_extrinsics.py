@@ -232,13 +232,13 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
     pose_lines = [
         f"=== Camera {camera_key} Extrinsics ===",
         f"Camera {camera_key} translation (mm):",
-        f"  tx (X forward): {translation_mm[0]:.6f}",
-        f"  ty (Y left): {translation_mm[1]:.6f}",
-        f"  tz (Z up): {translation_mm[2]:.6f}",
+        f"  tx (camera +X, right): {translation_mm[0]:.6f}",
+        f"  ty (camera +Y, down): {translation_mm[1]:.6f}",
+        f"  tz (camera +Z, forward): {translation_mm[2]:.6f}",
         "Camera rotation (Rodrigues, rad):",
-        f"  rx (roll about X): {rotation_rad[0]:.6f}",
-        f"  ry (pitch about Y): {rotation_rad[1]:.6f}",
-        f"  rz (yaw about Z): {rotation_rad[2]:.6f}",
+        f"  rx (about +X, roll/right tilt): {rotation_rad[0]:.6f}",
+        f"  ry (about +Y, pitch/down tilt): {rotation_rad[1]:.6f}",
+        f"  rz (about +Z, yaw/left turn): {rotation_rad[2]:.6f}",
     ]
     print("\n".join(pose_lines))
 
