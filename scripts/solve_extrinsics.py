@@ -245,6 +245,7 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
     output_base = args.output_root / intrinsics_folder
     output_base.mkdir(parents=True, exist_ok=True)
     standard_pose_path = output_base / "standard" / "standard_pose.json"
+    standard_pose_path.parent.mkdir(parents=True, exist_ok=True)
     adjustments_lines: list[str] = []
     delta_translation = None
     delta_rpy = None
@@ -271,14 +272,15 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
             delta_translation = offset[:3, 3]
             roll, pitch, yaw = rotation_matrix_to_rpy(offset[:3, :3])
             delta_rpy = (roll, pitch, yaw)
+            roll_deg, pitch_deg, yaw_deg = map(np.degrees, delta_rpy)
             adjustments_lines = [
                 "==== Adjustments to reach standard pose: =====",
                 f"  Δx (mm): {delta_translation[0]:.6f}",
                 f"  Δy (mm): {delta_translation[1]:.6f}",
                 f"  Δz (mm): {delta_translation[2]:.6f}",
-                f"  Pitch (Y, rad): {pitch:.6f}",
-                f"  Roll (X, rad): {roll:.6f}",
-                f"  Yaw (Z, rad): {yaw:.6f}",
+                f"  Pitch (Y, deg): {pitch_deg:.6f}",
+                f"  Roll (X, deg): {roll_deg:.6f}",
+                f"  Yaw (Z, deg): {yaw_deg:.6f}",
             ]
             print("\n".join(adjustments_lines))
         else:
@@ -314,10 +316,10 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
     if delta_translation is not None and delta_rpy is not None:
         payload["delta_to_standard"] = {
             "translation_mm": delta_translation.tolist(),
-            "rotation_rpy_rad": {
-                "roll": delta_rpy[0],
-                "pitch": delta_rpy[1],
-                "yaw": delta_rpy[2],
+            "rotation_rpy_deg": {
+                "roll": float(np.degrees(delta_rpy[0])),
+                "pitch": float(np.degrees(delta_rpy[1])),
+                "yaw": float(np.degrees(delta_rpy[2])),
             },
         }
     output_path.write_text(json.dumps(payload, indent=2))
