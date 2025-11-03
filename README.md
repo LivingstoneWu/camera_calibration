@@ -16,7 +16,7 @@ This repository provides a Python script for getting camera intrinsics and extri
 `--square-size` in mm
 `--output-root` 输出路径默认`intrinsics/{camera_id}/calibration.txt`
 ### 标定外参
-内参标定后把文件夹名由id改为相机名，在`scripts/solve_extrinsics.py`起始处dict填对应id和相机名,标定外参，默认存在`extrinsics/`下，如果尚没有`scripts/{camera_name}`文件夹会创建一个作为标准位置，之后对比标准位置计算需要做的相机位置变换。
+内参标定后把文件夹名由id改为相机名，在`scripts/solve_extrinsics.py`起始处dict填对应id和相机名,标定外参，默认存在`extrinsics/`下，如果尚没有`scripts/{camera_name}`文件夹会创建一个并保存一个`standard_pose.json`作为标准位置，之后对比标准位置计算需要做的相机位置变换。
 
 
 # Available Methods
