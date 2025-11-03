@@ -244,7 +244,7 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
 
     output_base = args.output_root / intrinsics_folder
     output_base.mkdir(parents=True, exist_ok=True)
-    standard_pose_path = output_base / "standard_pose.json"
+    standard_pose_path = output_base / "standard" / "standard_pose.json"
     adjustments_lines: list[str] = []
     delta_translation = None
     delta_rpy = None
