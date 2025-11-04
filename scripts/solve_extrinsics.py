@@ -268,7 +268,7 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
             standard_checker_to_camera = np.array(
                 standard_data["checkerboard_to_camera_transform"], dtype=np.float64
             )
-            offset = standard_checker_to_camera @ transform_camera_to_checker.astype(np.float64)
+            offset = transform_camera_to_checker.astype(np.float64) @ standard_checker_to_camera
             delta_translation = offset[:3, 3]
             roll, pitch, yaw = rotation_matrix_to_rpy(offset[:3, :3])
             delta_rpy = (roll, pitch, yaw)
