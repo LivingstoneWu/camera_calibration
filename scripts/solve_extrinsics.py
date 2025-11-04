@@ -236,9 +236,9 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
         f"  ty (camera +Y, down): {translation_mm[1]:.6f}",
         f"  tz (camera +Z, forward): {translation_mm[2]:.6f}",
         "Camera rotation (Rodrigues, rad):",
-        f"  rx (about +X, roll/right tilt): {rotation_rad[0]:.6f}",
-        f"  ry (about +Y, pitch/down tilt): {rotation_rad[1]:.6f}",
-        f"  rz (about +Z, yaw/left turn): {rotation_rad[2]:.6f}",
+        f"  rx (about +X, pitch/up-down tilt): {rotation_rad[0]:.6f}",
+        f"  ry (about +Y, yaw/left-right sweep): {rotation_rad[1]:.6f}",
+        f"  rz (about +Z, roll/clockwise tilt): {rotation_rad[2]:.6f}",
     ]
     print("\n".join(pose_lines))
 
@@ -278,9 +278,9 @@ def process_camera(camera_key: str, intrinsics_folder: str, args: argparse.Names
                 f"  Δx (mm): {delta_translation[0]:.6f}",
                 f"  Δy (mm): {delta_translation[1]:.6f}",
                 f"  Δz (mm): {delta_translation[2]:.6f}",
-                f"  Pitch (Y, deg): {pitch_deg:.6f}",
-                f"  Roll (X, deg): {roll_deg:.6f}",
-                f"  Yaw (Z, deg): {yaw_deg:.6f}",
+                f"  Yaw (Y, deg, turn right): {pitch_deg:.6f}",
+                f"  Pitch (X, deg, tilt up): {roll_deg:.6f}",
+                f"  Roll (Z, deg, clockwise tilt): {yaw_deg:.6f}",
             ]
             print("\n".join(adjustments_lines))
         else:
