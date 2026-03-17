@@ -1,5 +1,6 @@
 # About this Repository
 This repository provides a Python script for getting camera intrinsics and extrinsics parameters using patterned images.
+** Based on ksonod/camera_calibration. **
 
 # 使用说明
 
